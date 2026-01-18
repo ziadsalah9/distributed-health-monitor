@@ -1,4 +1,4 @@
-package dto
+package dtos
 
 type ServiceCreateDTO struct {
 	Name     string `json:"name" binding:"required,min=3"`

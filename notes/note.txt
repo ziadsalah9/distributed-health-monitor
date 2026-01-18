@@ -1,0 +1,40 @@
+
+
+my service has 
+
+1- interval duration .  ex  = 40 sec 
+
+2- last check . ex = 1/18/2026  sunday at 7:43:10
+
+
+the next check should be start at 7:43:50
+ 
+
+ igonre mintues ,hours  and just take seconds 
+ 
+ 1- producer not produce
+ last check = 7:43:10 
+ now() = 7:43:40  = 40    
+ result = 40-10 = 30 
+
+
+ result < interval  ===> 30 < 40 then  producer not produce 
+
+
+ 2- producer produce
+
+ last check = 7:43:10 
+ now() = 7:43:50  = 50
+result = 50-10 = 40 
+
+ result < interval  ===> 40 < 40 (no) then  producer should produce 
+
+
+
+
+
+
+db.DB.Where("extract(epoch from (now() - last_check)) >= interval OR last_check IS NULL").Find(&services)
+
+
+extract(epoch from (query ))  --> convert time to integer of seconds

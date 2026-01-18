@@ -7,7 +7,7 @@ import (
 
 	"net/http"
     "distributed-health-monitor/internal/db"
-	"distributed-health-monitor/internal/DTOS"
+	"distributed-health-monitor/internal/dtos"
 	"distributed-health-monitor/internal/models"
 
 )
@@ -17,18 +17,18 @@ import (
 
 func RegisterService(c *gin.Context){
 
-	var serviceDTO dto.ServiceCreateDTO
+	var servicedto dtos.ServiceCreateDTO
 
-	if err := c.ShouldBindJSON(&serviceDTO); err != nil {
+	if err := c.ShouldBindJSON(&servicedto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()}) // return { "error": "error.message" }
 		log.Println("Error binding JSON:", err)
 		return
 	}
 	// mapping 
 	service := models.Service{
-		Name: serviceDTO.Name,
-		URL:  serviceDTO.URL,
-		Interval: serviceDTO.Interval,
+		Name: servicedto.Name,
+		URL:  servicedto.URL,
+		Interval: servicedto.Interval,
 	}
 
 	if err := db.DB.Create(&service).Error; err != nil {
@@ -52,9 +52,9 @@ func ListServices (c *gin.Context) {
 		return
 	}
 
-	var response []dto.ServiceResponseDTO
+	var response []dtos.ServiceResponseDTO
 	for _, s := range services {
-		response = append(response, dto.ServiceResponseDTO{
+		response = append(response, dtos.ServiceResponseDTO{
 			ID:         s.ID,
 			Name:       s.Name,
 			URL:        s.URL,

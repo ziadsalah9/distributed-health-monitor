@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"distributed-health-monitor/internal/db"
-	"distributed-health-monitor/internal/DTOS"
+	"distributed-health-monitor/internal/dtos"
 	"distributed-health-monitor/internal/models"
 	"net/http"
 
@@ -21,9 +21,9 @@ func GetServiceLogs(c *gin.Context) {
 		return
 	}
 
-	var response []dto.HealthLogResponseDTO
+	var response []dtos.HealthLogResponseDTO
 	for _, l := range logs {
-		response = append(response, dto.HealthLogResponseDTO{
+		response = append(response, dtos.HealthLogResponseDTO{
 			ID:        l.ID,
 			Status:    l.Status,
 			//State:     l.state,
