@@ -9,6 +9,7 @@ import (
 	"distributed-health-monitor/internal/handlers"
 
 	"distributed-health-monitor/internal/scheduler"
+	"distributed-health-monitor/internal/worker"
 	 amqp "github.com/rabbitmq/amqp091-go"
 
 )
@@ -57,6 +58,7 @@ import (
 
 	// make it as background process (sheduler job in java  , background job in c#)
 	  go scheduler.StartScheduler(channel)
+	  go worker.StartWorker(conn)
 
 		r := gin.Default()
 

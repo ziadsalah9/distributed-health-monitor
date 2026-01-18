@@ -19,3 +19,13 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: health_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ziads5933@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: ziadsalah
+    ports:
+      - "8080:80"                              
+    depends_on:
+      - postgres

@@ -10,5 +10,6 @@ type Service struct {
 	LastStatus string
 	CreatedAt  time.Time
 	LastCheck  time.Time
+	Timeout	int
 	HealthLogs []HealthLog `gorm:"foreignKey:ServiceID"`
 }

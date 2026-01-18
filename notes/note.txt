@@ -38,3 +38,36 @@ db.DB.Where("extract(epoch from (now() - last_check)) >= interval OR last_check 
 
 
 extract(epoch from (query ))  --> convert time to integer of seconds
+
+
+producer produce id to consumer . 
+
+
+/// consumer 
+
+1- consumer take the id from queue then going to database tell it . 
+   get service using service id .  reuturned json service response   {id: 1 , url : "http://google.com/health"}
+    
+    consumer get Url , 
+
+    send request to url 
+
+    1- cheCk how time will take if (more than 10 sec ) close connection 
+    2- if ok calculate how time from sending req to res .
+    3-check the status if 2** up if 4** down
+
+    save the row at healthlog .
+
+    then save laststate of service , last status 
+
+
+
+    
+    الـ Interval: هو "هنفحص كل قد إيه؟" (مثلاً كل دقيقة). ده بيتحكم فيه الـ Scheduler.
+
+الـ Timeout: هو "هنستنى الرد لمدة قد إيه؟" (مثلاً 10 ثواني). ده بيتحكم فيه الـ Worker. 
+
+
+
+
+// i should update 
