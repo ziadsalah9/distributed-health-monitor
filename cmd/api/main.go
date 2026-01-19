@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 	"github.com/gin-gonic/gin"
-
+	"os"
+	"github.com/joho/godotenv"
+	
     "distributed-health-monitor/internal/db"
 	"distributed-health-monitor/internal/models"
 	"distributed-health-monitor/internal/repository"
@@ -20,12 +22,16 @@ import (
 
 	func main() {
 	
+		err := godotenv.Load()
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
 	
 		db.ConnectPostgres()
 
-		err:= db.DB.AutoMigrate(&models.Service{}, &models.HealthLog{})
+		err2:= db.DB.AutoMigrate(&models.Service{}, &models.HealthLog{})
 
-		if err != nil {
+		if err2 != nil {
 			log.Fatal("Auto Migration failed:", err)
 		}
 
@@ -35,7 +41,10 @@ import (
 
  		// RabbitMQ connection
 
-		conn , err :=amqp.Dial("amqp://guest:guest@localhost:5672/")
+		//conn , err :=amqp.Dial("amqp://guest:guest@localhost:5672/")
+
+			rabbitURL := os.Getenv("RABBITMQ_URL")
+    		conn, err := amqp.Dial(rabbitURL)
 
 		if err!= nil{
 			log.Fatal( "Failed to connect to RabbitMQ:", err)
@@ -85,7 +94,6 @@ import (
 		hub.HandleWS(c.Writer, c.Request)
 	})
 
-	    		// Service routes
 		serviceRoutes := r.Group("/services")
 		{
 			serviceRoutes.POST("/", servicehandlers.RegisterService)
@@ -93,5 +101,11 @@ import (
 			serviceRoutes.GET("/:id/logs", servicehandlers.GetServiceLogs) //  show logs for a specific service
 		}		
 
-			r.Run(":8088")
+		appPort := os.Getenv("PORT")
+    if appPort == "" {
+		appPort = ":8080" 
+	}
+    r.Run(appPort)
+
+
 	}
