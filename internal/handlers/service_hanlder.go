@@ -4,18 +4,29 @@ import (
 
 	"log"
 	"github.com/gin-gonic/gin"
-
+	"distributed-health-monitor/internal/repository"
 	"net/http"
-    "distributed-health-monitor/internal/db"
 	"distributed-health-monitor/internal/dtos"
 	"distributed-health-monitor/internal/models"
+	"strconv"	
 
 )
 
 
+type ServiceHandler struct {
+    repo repository.ServiceRepository
+}
+
+// injection
+func NewServiceHandler(r repository.ServiceRepository) *ServiceHandler {
+	return &ServiceHandler{repo: r}
+}
+
+
+
 // Register service   
 
-func RegisterService(c *gin.Context){
+func (h *ServiceHandler) RegisterService(c *gin.Context){
 
 	var servicedto dtos.ServiceCreateDTO
 
@@ -33,9 +44,8 @@ func RegisterService(c *gin.Context){
 
 	}
 
-	if err := db.DB.Create(&service).Error; err != nil {
+	if err := h.repo.CreateService(&service); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create service"})
-	    log.Println("Error creating service:", err)
 		return
 	}
 
@@ -43,16 +53,21 @@ func RegisterService(c *gin.Context){
 }
 
 // List all services
-func ListServices (c *gin.Context) {
+func (h *ServiceHandler) ListServices(c *gin.Context) {
 
 
-	var services []models.Service
-
-	if err := db.DB.Find(&services).Error;  err != nil {
-		c.JSON (http.StatusInternalServerError, gin.H{"error": "Failed to retrieve services"})
-		log.Println("Error retrieving services:", err)
+	services, err := h.repo.GetAllServices()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve services"})
 		return
 	}
+	// var services []models.Service
+
+	// if err := db.DB.Find(&services).Error;  err != nil {
+	// 	c.JSON (http.StatusInternalServerError, gin.H{"error": "Failed to retrieve services"})
+	// 	log.Println("Error retrieving services:", err)
+	// 	return
+	// }
 
 	var response []dtos.ServiceResponseDTO
 	for _, s := range services {
@@ -74,4 +89,22 @@ func ListServices (c *gin.Context) {
 
 
 
+}
+
+
+func (h *ServiceHandler) GetServiceLogs(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid service ID"})
+		return
+	}
+
+	logs, err := h.repo.GetLogsByServiceID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch logs"})
+		return
+	}
+
+	c.JSON(http.StatusOK, logs)
 }

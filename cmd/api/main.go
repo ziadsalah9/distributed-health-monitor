@@ -6,6 +6,7 @@ import (
 
     "distributed-health-monitor/internal/db"
 	"distributed-health-monitor/internal/models"
+	"distributed-health-monitor/internal/repository"
 	"distributed-health-monitor/internal/handlers"
 
 	"distributed-health-monitor/internal/scheduler"
@@ -57,6 +58,10 @@ import (
 			nil,            
 		)
 
+
+		// inject repo
+		serviceRepo := repository.NewServiceRepository(db.DB)
+		servicehandlers := handlers.NewServiceHandler(serviceRepo)
 		
 		hub:= websocket.NewHub()
 		go hub.Run()
@@ -83,9 +88,9 @@ import (
 	    		// Service routes
 		serviceRoutes := r.Group("/services")
 		{
-			serviceRoutes.POST("/", handlers.RegisterService)
-			serviceRoutes.GET("/", handlers.ListServices)
-			serviceRoutes.GET("/:id/logs", handlers.GetServiceLogs) //  show logs for a specific service
+			serviceRoutes.POST("/", servicehandlers.RegisterService)
+			serviceRoutes.GET("/", servicehandlers.ListServices)
+			serviceRoutes.GET("/:id/logs", servicehandlers.GetServiceLogs) //  show logs for a specific service
 		}		
 
 			r.Run(":8088")
