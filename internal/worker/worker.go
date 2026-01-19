@@ -7,11 +7,12 @@ import (
 	"log"
 	"strconv"
 	"time"
+	"distributed-health-monitor/internal/websocket"
 	
 amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func StartWorker(c*amqp.Connection){
+func StartWorker(c*amqp.Connection, hub*websocket.Hub) {
 
 	ch,err:=c.Channel()
 	if err!=nil{
@@ -31,7 +32,7 @@ func StartWorker(c*amqp.Connection){
      serviceId,_ := strconv.Atoi(string(d.Body))
 	 log.Printf("Received a message for Service ID: %d", serviceId)
 
-	 processCheck(uint(serviceId))
+	 processCheck(uint(serviceId),hub)
 	}
 
 
@@ -39,7 +40,7 @@ func StartWorker(c*amqp.Connection){
 }
 
 
-func processCheck(id uint) {
+func processCheck(id uint, hub *websocket.Hub) {
 
 
 	var service models.Service
@@ -72,6 +73,24 @@ func processCheck(id uint) {
 			status = "UP"
 		}
 		resp.Body.Close()
+	}
+
+
+    // check if status has changed
+	if status != service.LastStatus {
+		log.Printf(" State Changed for %s: %s -> %s", service.Name, service.LastStatus, status)
+	
+		// send websocket notification about status change
+		hub.BroadcastUpdate(map[string]interface{}{
+			"service_id": service.ID,
+            "name":       service.Name,
+            "new_status": status,
+            "old_status": service.LastStatus,
+            "latency":    latency,
+		})
+
+
+	
 	}
 
 	db.DB.Model(&service).Updates(map[string]interface{}{

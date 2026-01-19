@@ -10,6 +10,8 @@ import (
 
 	"distributed-health-monitor/internal/scheduler"
 	"distributed-health-monitor/internal/worker"
+	"distributed-health-monitor/internal/websocket"
+
 	 amqp "github.com/rabbitmq/amqp091-go"
 
 )
@@ -55,10 +57,14 @@ import (
 			nil,            
 		)
 
+		
+		hub:= websocket.NewHub()
+		go hub.Run()
+
 
 	// make it as background process (sheduler job in java  , background job in c#)
 	  go scheduler.StartScheduler(channel)
-	  go worker.StartWorker(conn)
+	  go worker.StartWorker(conn,hub)
 
 		r := gin.Default()
 
@@ -69,6 +75,10 @@ import (
 			"status": "API running",
 				})
 			})
+
+			r.GET("/ws", func(c *gin.Context) {
+		hub.HandleWS(c.Writer, c.Request)
+	})
 
 	    		// Service routes
 		serviceRoutes := r.Group("/services")
