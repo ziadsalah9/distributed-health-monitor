@@ -1,9 +1,11 @@
 package dtos
 
+import "time"
 type ServiceCreateDTO struct {
 	Name     string `json:"name" binding:"required,min=3"`
 	URL      string `json:"url" binding:"required,url"`
 	Interval int    `json:"interval" binding:"required,min=10"`
+	Timeout  int    `json:"timeout" binding:"required,min=2"`
 }
 
 type ServiceResponseDTO struct {
@@ -12,5 +14,10 @@ type ServiceResponseDTO struct {
 	URL        string `json:"url"`
 	Interval   int    `json:"interval"`
 	LastStatus string `json:"last_status"`
-	LastState  string `json:"last_state"`
+	CreatedAt  time.Time `json:"created_at"`
+	LastState  time.Time `json:"last_state"`
+	Timeout    int    `json:"timeout"`      
+
+
+
 }

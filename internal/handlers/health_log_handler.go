@@ -26,9 +26,8 @@ func GetServiceLogs(c *gin.Context) {
 		response = append(response, dtos.HealthLogResponseDTO{
 			ID:        l.ID,
 			Status:    l.Status,
-			//State:     l.state,
-			LatencyMs: l.LatencyMs,
-			CheckedAt: l.CheckedAt,
+			ResponseTimeAsMs: l.LatencyMs,
+			Timestamp: l.CheckedAt,
 		})
 	}
 

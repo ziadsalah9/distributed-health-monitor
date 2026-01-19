@@ -29,6 +29,8 @@ func RegisterService(c *gin.Context){
 		Name: servicedto.Name,
 		URL:  servicedto.URL,
 		Interval: servicedto.Interval,
+		Timeout: servicedto.Timeout, 
+
 	}
 
 	if err := db.DB.Create(&service).Error; err != nil {
@@ -60,7 +62,10 @@ func ListServices (c *gin.Context) {
 			URL:        s.URL,
 			Interval:   s.Interval,
 			LastStatus: s.LastStatus,
-		//	LastState:  s.LastState,
+			CreatedAt: s.CreatedAt,
+            LastState:  s.LastCheck,
+			Timeout: s.Timeout,
+
 		})
 	}
 

@@ -5,7 +5,6 @@ import "time"
 type HealthLogResponseDTO struct {
 	ID        uint      `json:"id"`
 	Status    string    `json:"status"`     
-	State     string    `json:"state"`      
-	LatencyMs int       `json:"latency_ms"`
-	CheckedAt time.Time `json:"checked_at"`
+	ResponseTimeAsMs int       `json:"response_time"`
+	Timestamp time.Time `json:"timestamp"`
 }

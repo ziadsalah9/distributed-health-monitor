@@ -5,8 +5,7 @@ import "time"
 type HealthLog struct {
 	ID        uint `gorm:"primaryKey"`
 	ServiceID uint
-	Status    string
-	State 	 string   //  UP - DOWN
+	Status    string // UP - DOWN
 	LatencyMs int
 	CheckedAt time.Time
 
