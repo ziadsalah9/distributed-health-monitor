@@ -63,11 +63,3 @@ producer produce id to consumer .
 
 
     
-    الـ Interval: هو "هنفحص كل قد إيه؟" (مثلاً كل دقيقة). ده بيتحكم فيه الـ Scheduler.
-
-الـ Timeout: هو "هنستنى الرد لمدة قد إيه؟" (مثلاً 10 ثواني). ده بيتحكم فيه الـ Worker. 
-
-
-
-
-// i should update 
