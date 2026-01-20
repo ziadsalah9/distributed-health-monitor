@@ -29,3 +29,13 @@ services:
       - "8080:80"                              
     depends_on:
       - postgres
+  
+  app:
+    image: health-monitor-app
+    ports:
+      - "8088:8088"
+    env_file:
+      - .env  
+    depends_on:
+      - postgres
+      - rabbitmq

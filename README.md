@@ -154,3 +154,12 @@ RESPONSE :
   "old_status": "UP",
   "service_id": 8
 }
+
+
+# to create app as image in docker 
+ 
+ 1-build image 
+ docker build -t health-monitor-app .
+
+ 2- Run using docker compose 
+ docker-compose up
